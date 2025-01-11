@@ -16,7 +16,7 @@ datasource db {
 model Product {
   id        Int       @id @default(autoincrement())
   name      String
-  price     Decimal
+  price     Float
   imageUrl  String
   imageAlt  String
   quantity  Int
@@ -65,7 +65,7 @@ model Order {
   paymentMethod  String
   orderItems     OrderItem[]
 
-  totalPrice     Decimal
+  totalPrice     Float
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 }
@@ -76,7 +76,7 @@ model OrderItem {
   product   Product  @relation(fields: [productId], references: [id])
   productId Int
 
-  priceAtPurchase    Decimal
+  priceAtPurchase    Float
   quantity  Int      @default(1)
 
   createdAt DateTime @default(now())
