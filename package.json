@@ -1,5 +1,5 @@
 {
-  "name": "",
+  "name": "remix-checkout",
   "private": true,
   "sideEffects": false,
   "type": "module",
@@ -13,6 +13,7 @@
   "dependencies": {
     "@headlessui/react": "^2.2.0",
     "@heroicons/react": "^2.2.0",
+    "@prisma/client": "^6.2.1",
     "@remix-run/node": "^2.15.2",
     "@remix-run/react": "^2.15.2",
     "@remix-run/serve": "^2.15.2",
@@ -22,6 +23,7 @@
   },
   "devDependencies": {
     "@remix-run/dev": "^2.15.2",
+    "@types/node": "^22.10.5",
     "@types/react": "^18.2.20",
     "@types/react-dom": "^18.2.7",
     "@typescript-eslint/eslint-plugin": "^6.7.4",
@@ -34,8 +36,10 @@
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "postcss": "^8.4.49",
+    "prisma": "^6.2.1",
     "tailwindcss": "^3.4.17",
-    "typescript": "^5.1.6",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.7.3",
     "vite": "^5.1.0",
     "vite-tsconfig-paths": "^4.2.1"
   },
