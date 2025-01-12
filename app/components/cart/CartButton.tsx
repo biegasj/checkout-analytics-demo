@@ -10,6 +10,7 @@ const CartButton = ({ cartCount, cartOpen, setCartOpen }: CartButtonProps) => {
   return (
     <div className="relative">
       <button
+        type="button"
         className="bg-black hover:bg-gray-700 p-2 rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
         aria-label="Shopping Cart"
         onClick={() => setCartOpen(!cartOpen)}
