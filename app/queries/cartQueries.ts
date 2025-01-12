@@ -26,3 +26,9 @@ export async function upsertCartItem(
     create: { cartId, productId, quantity },
   });
 }
+
+export async function deleteCartItem(cartId: number, productId: number) {
+  return prisma.cartItem.delete({
+    where: { cartItemId: { cartId, productId } },
+  });
+}

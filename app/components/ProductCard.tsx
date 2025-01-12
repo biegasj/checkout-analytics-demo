@@ -23,12 +23,13 @@ const ProductCard = memo(({ product, onAddToCart }: ProductCardProps) => {
       <div className="p-4 flex flex-col flex-grow">
         <h2 className="text-xl text-black font-bold mb-2">{product.name}</h2>
         <p className="text-gray-700 text-lg">${product.price}</p>
-        <fetcher.Form method="post" className="mt-auto">
+        <fetcher.Form className="mt-auto" method="post">
           <input type="hidden" name="productId" value={product.id} />
           <button
-            type="submit"
             className="mt-4 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2"
-            aria-label={`Add ${product.name} to cart`}
+            type="submit"
+            name="_action"
+            value="addToCart"
             onClick={onAddToCart}
           >
             Add to Cart

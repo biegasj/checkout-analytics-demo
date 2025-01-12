@@ -12,10 +12,10 @@ import { Product } from "@prisma/client";
 import CartButton from "~/components/cart/CartButton";
 import CartDialog from "~/components/cart/CartDialog";
 import ProductCard from "~/components/ProductCard";
-import { getCart, upsertCart, upsertCartItem } from "~/queries/cartQueries";
+import { getCart } from "~/queries/cartQueries";
 import { getAllProducts } from "~/queries/productQueries";
-import { commitSession } from "~/sessions";
 import { getOrCreateSessionId } from "~/utils/sessionUtils";
+import { addToCartAction, removeCartItemAction } from "~/routes/_index/actions";
 
 export const meta: MetaFunction = () => {
   return [
@@ -46,25 +46,18 @@ export const action: ActionFunction = async ({
     request.headers.get("Cookie")
   );
 
-  const form = await request.formData();
-  const productId = Number(form.get("productId") || -1);
-  const quantity = Number(form.get("quantity") || 1);
+  const formData = await request.formData();
+  const { _action } = Object.fromEntries(formData);
 
-  if (isNaN(productId) || isNaN(quantity)) {
-    throw new Error("Invalid input");
-  }
-
-  const cart = await upsertCart(sessionId);
-  const cartItem = await upsertCartItem(cart.id, productId, quantity);
-
-  return Response.json(
-    { success: true, cartItem },
-    {
-      headers: {
-        "Set-Cookie": await commitSession(session),
-      },
+  switch (_action) {
+    case "addToCart":
+      return addToCartAction({ sessionId, session, formData });
+    case "removeFromCart":
+      return removeCartItemAction({ session, formData });
+    default: {
+      return new Response("Unknown action", { status: 400 });
     }
-  );
+  }
 };
 
 export default function Index() {
@@ -76,7 +69,15 @@ export default function Index() {
 
   return (
     <div className="container mx-auto max-w-screen-lg p-8 xl:mt-4 xl:mb-8 divide-y">
-      {cart && <CartDialog open={cartOpen} setOpen={setCartOpen} cart={cart} />}
+      {cart && (
+        <CartDialog
+          open={cartOpen}
+          setOpen={setCartOpen}
+          cartCount={cartCount}
+          setCartCount={setCartCount}
+          cart={cart}
+        />
+      )}
       <header className="pb-8">
         <div className="flex justify-end items-center mb-8">
           <CartButton

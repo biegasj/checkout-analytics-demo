@@ -17,9 +17,17 @@ interface CartProps {
       product: Product;
     })[];
   };
+  cartCount: number;
+  setCartCount: (value: ((prevState: number) => number) | number) => void;
 }
 
-const CartDialog = ({ open, setOpen, cart }: CartProps) => {
+const CartDialog = ({
+  open,
+  setOpen,
+  cart,
+  cartCount,
+  setCartCount,
+}: CartProps) => {
   const calculateSubtotal = () =>
     cart.items.reduce(
       (total, item) => total + item.product.price * item.quantity,
@@ -68,7 +76,13 @@ const CartDialog = ({ open, setOpen, cart }: CartProps) => {
                     <div className="flow-root">
                       <ul className="-my-6 divide-y divide-gray-200">
                         {cart.items.map((item) => (
-                          <CartItemCard key={item.product.id} item={item} />
+                          <CartItemCard
+                            key={item.product.id}
+                            cartId={cart.id}
+                            item={item}
+                            cartCount={cartCount}
+                            setCartCount={setCartCount}
+                          />
                         ))}
                       </ul>
                     </div>
