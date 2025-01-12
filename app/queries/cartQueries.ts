@@ -1,9 +1,18 @@
 import prisma from "../../prisma/client";
 
 export async function getCart(sessionId: string) {
+  return prisma.cart.findUnique({ where: { sessionId } });
+}
+
+export async function getCartWithRelated(sessionId: string) {
   return prisma.cart.findUnique({
     where: { sessionId },
-    include: { items: { include: { product: true } } },
+    include: {
+      items: {
+        include: { product: true },
+        orderBy: { product: { id: "desc" } },
+      },
+    },
   });
 }
 
@@ -22,7 +31,7 @@ export async function upsertCartItem(
 ) {
   return prisma.cartItem.upsert({
     where: { cartItemId: { cartId, productId } },
-    update: { quantity: { increment: quantity } },
+    update: { quantity },
     create: { cartId, productId, quantity },
   });
 }

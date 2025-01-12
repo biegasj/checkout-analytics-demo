@@ -16,6 +16,9 @@ const CartItemCard = memo(
     const fetcher = useFetcher();
     const isIdle = fetcher.state === "idle";
 
+    const handleIncrement = () => setCartCount((prev) => prev + 1);
+    const handleDecrement = () => setCartCount((prev) => prev - 1);
+
     return (
       <li
         className={`flex py-6 ${
@@ -36,7 +39,47 @@ const CartItemCard = memo(
             <p className="ml-4">${item.product.price.toFixed(2)}</p>
           </div>
           <div className="flex flex-1 items-end justify-between text-sm">
-            <p className="text-gray-500">Qty {item.quantity}</p>
+            <div className="flex items-center gap-2">
+              <fetcher.Form method="post">
+                <input type="hidden" name="cartId" value={cartId} />
+                <input type="hidden" name="productId" value={item.productId} />
+                <input
+                  type="hidden"
+                  name="quantity"
+                  value={item.quantity - 1}
+                />
+                <button
+                  type="submit"
+                  name="_action"
+                  value="updateCartItemQuantity"
+                  className="text-blue-600 hover:text-blue-500 px-2 py-1 border rounded"
+                  disabled={!isIdle || item.quantity <= 1}
+                  onClick={handleDecrement}
+                >
+                  -
+                </button>
+              </fetcher.Form>
+              <p className="text-gray-500">{item.quantity}</p>
+              <fetcher.Form method="post">
+                <input type="hidden" name="cartId" value={cartId} />
+                <input type="hidden" name="productId" value={item.productId} />
+                <input
+                  type="hidden"
+                  name="quantity"
+                  value={item.quantity + 1}
+                />
+                <button
+                  type="submit"
+                  name="_action"
+                  value="updateCartItemQuantity"
+                  className="text-blue-600 hover:text-blue-500 px-2 py-1 border rounded"
+                  disabled={!isIdle}
+                  onClick={handleIncrement}
+                >
+                  +
+                </button>
+              </fetcher.Form>
+            </div>
             <fetcher.Form method="post">
               <input type="hidden" name="cartId" value={cartId} />
               <input type="hidden" name="productId" value={item.productId} />

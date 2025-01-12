@@ -1,10 +1,12 @@
 import {
   deleteCartItem,
+  getCart,
   upsertCart,
   upsertCartItem,
 } from "~/queries/cartQueries";
 import { commitSession } from "~/sessions";
 import { Session } from "@remix-run/node";
+import { Cart } from "@prisma/client";
 
 interface IndexActionArgs {
   sessionId: string;
@@ -33,6 +35,27 @@ export const addToCartAction = async ({
       "Set-Cookie": await commitSession(session),
     },
   });
+};
+
+export const updateCartItemQuantityAction = async ({
+  sessionId,
+  session,
+  formData,
+}: IndexActionArgs) => {
+  const productId = Number(formData.get("productId") || -1);
+  const quantity = Number(formData.get("quantity") || 1);
+
+  const cart = (await getCart(sessionId)) as Cart;
+  const cartItem = await upsertCartItem(cart.id, productId, quantity);
+
+  return Response.json(
+    { success: true, cartItem },
+    {
+      headers: {
+        "Set-Cookie": await commitSession(session),
+      },
+    }
+  );
 };
 
 export const removeCartItemAction = async ({

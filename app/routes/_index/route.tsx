@@ -7,15 +7,19 @@ import {
   MetaFunction,
 } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import { Product } from "@prisma/client";
+import { CartItem, Product } from "@prisma/client";
 
 import CartButton from "~/components/cart/CartButton";
 import CartDialog from "~/components/cart/CartDialog";
 import ProductThumbnail from "~/components/ProductThumbnail";
-import { getCart } from "~/queries/cartQueries";
+import { getCartWithRelated } from "~/queries/cartQueries";
 import { getAllProducts } from "~/queries/productQueries";
 import { getOrCreateSessionId } from "~/utils/sessionUtils";
-import { addToCartAction, removeCartItemAction } from "~/routes/_index/actions";
+import {
+  addToCartAction,
+  removeCartItemAction,
+  updateCartItemQuantityAction,
+} from "~/routes/_index/actions";
 
 export const meta: MetaFunction = () => {
   return [
@@ -32,9 +36,12 @@ export const loader: LoaderFunction = async ({
   );
 
   const products = await getAllProducts();
-  const cart = sessionId ? await getCart(sessionId) : null;
+  const cart = sessionId ? await getCartWithRelated(sessionId) : null;
   const totalQuantity =
-    cart?.items.reduce((sum, item) => sum + item.quantity, 0) || 0;
+    cart?.items.reduce(
+      (sum: number, item: CartItem) => sum + item.quantity,
+      0
+    ) || 0;
 
   return { products, cart, totalQuantity };
 };
@@ -52,6 +59,8 @@ export const action: ActionFunction = async ({
   switch (_action) {
     case "addToCart":
       return addToCartAction({ sessionId, session, formData });
+    case "updateCartItemQuantity":
+      return updateCartItemQuantityAction({ sessionId, session, formData });
     case "removeFromCart":
       return removeCartItemAction({ session, formData });
     default: {
