@@ -11,7 +11,7 @@ import { Product } from "@prisma/client";
 
 import CartButton from "~/components/cart/CartButton";
 import CartDialog from "~/components/cart/CartDialog";
-import ProductCard from "~/components/ProductCard";
+import ProductThumbnail from "~/components/ProductThumbnail";
 import { getCart } from "~/queries/cartQueries";
 import { getAllProducts } from "~/queries/productQueries";
 import { getOrCreateSessionId } from "~/utils/sessionUtils";
@@ -96,7 +96,7 @@ export default function Index() {
       </header>
       <main className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-8 xl:pb-8">
         {products.map((product: Product) => (
-          <ProductCard
+          <ProductThumbnail
             key={product.id}
             product={product}
             onAddToCart={handleAddToCart}

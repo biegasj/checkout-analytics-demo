@@ -7,7 +7,7 @@ interface ProductCardProps {
   onAddToCart: () => void;
 }
 
-const ProductCard = memo(({ product, onAddToCart }: ProductCardProps) => {
+const ProductThumbnail = memo(({ product, onAddToCart }: ProductCardProps) => {
   const fetcher = useFetcher();
 
   return (
@@ -40,4 +40,4 @@ const ProductCard = memo(({ product, onAddToCart }: ProductCardProps) => {
   );
 });
 
-export default ProductCard;
+export default ProductThumbnail;
