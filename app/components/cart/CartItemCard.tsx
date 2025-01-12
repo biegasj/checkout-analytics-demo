@@ -16,6 +16,8 @@ const CartItemCard = memo(
     const fetcher = useFetcher();
     const isIdle = fetcher.state === "idle";
 
+    const itemTotal = item.product.price * item.quantity;
+
     const handleIncrement = () => setCartCount((prev) => prev + 1);
     const handleDecrement = () => setCartCount((prev) => prev - 1);
 
@@ -36,7 +38,10 @@ const CartItemCard = memo(
         <div className="ml-4 flex flex-1 flex-col">
           <div className="flex justify-between text-base font-medium text-gray-900">
             <h3>{item.product.name}</h3>
-            <p className="ml-4">${item.product.price.toFixed(2)}</p>
+            <p>${itemTotal.toFixed(2)}</p>
+          </div>
+          <div className="flex justify-end text-xs font-medium mt-1 text-gray-500">
+            <p>${item.product.price.toFixed(2)}</p>
           </div>
           <div className="flex flex-1 items-end justify-between text-sm">
             <div className="flex items-center gap-2">
