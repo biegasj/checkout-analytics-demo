@@ -19,6 +19,7 @@ interface CartProps {
   };
   cartCount: number;
   setCartCount: (value: ((prevState: number) => number) | number) => void;
+  sessionId: string;
 }
 
 const CartDialog = ({
@@ -27,12 +28,12 @@ const CartDialog = ({
   cart,
   cartCount,
   setCartCount,
+  sessionId,
 }: CartProps) => {
-  const calculateSubtotal = () =>
-    cart.items.reduce(
-      (total, item) => total + item.product.price * item.quantity,
-      0
-    );
+  const subtotal = cart.items.reduce(
+    (total, item) => total + item.product.price * item.quantity,
+    0
+  );
 
   return (
     <Dialog
@@ -90,7 +91,8 @@ const CartDialog = ({
                 </div>
 
                 <CartDialogFooter
-                  subtotal={calculateSubtotal()}
+                  sessionId={sessionId}
+                  subtotal={subtotal}
                   onClose={() => setOpen(false)}
                 />
               </div>

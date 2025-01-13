@@ -11,7 +11,7 @@ import { CartItem, Product } from "@prisma/client";
 
 import CartButton from "~/components/cart/CartButton";
 import CartDialog from "~/components/cart/CartDialog";
-import ProductThumbnail from "~/components/ProductThumbnail";
+import ProductThumbnail from "~/components/product/ProductThumbnail";
 import { getCartWithRelated } from "~/queries/cartQueries";
 import { getAllProducts } from "~/queries/productQueries";
 import { getOrCreateSessionId } from "~/utils/sessionUtils";
@@ -43,7 +43,7 @@ export const loader: LoaderFunction = async ({
       0
     ) || 0;
 
-  return { products, cart, totalQuantity };
+  return { sessionId, products, cart, totalQuantity };
 };
 
 export const action: ActionFunction = async ({
@@ -70,7 +70,8 @@ export const action: ActionFunction = async ({
 };
 
 export default function Index() {
-  const { products, cart, totalQuantity } = useLoaderData<typeof loader>();
+  const { sessionId, products, cart, totalQuantity } =
+    useLoaderData<typeof loader>();
   const [cartCount, setCartCount] = useState<number>(totalQuantity);
   const [cartOpen, setCartOpen] = useState<boolean>(false);
 
@@ -85,6 +86,7 @@ export default function Index() {
           cartCount={cartCount}
           setCartCount={setCartCount}
           cart={cart}
+          sessionId={sessionId}
         />
       )}
       <header className="pb-8">
