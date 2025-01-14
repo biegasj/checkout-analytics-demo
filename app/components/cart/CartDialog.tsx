@@ -91,6 +91,7 @@ const CartDialog = ({
                 </div>
 
                 <CartDialogFooter
+                  cart={cart}
                   sessionId={sessionId}
                   subtotal={subtotal}
                   onClose={() => setOpen(false)}
