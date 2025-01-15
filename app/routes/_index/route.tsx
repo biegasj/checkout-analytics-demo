@@ -43,7 +43,7 @@ export const loader: LoaderFunction = async ({
       0
     ) || 0;
 
-  return { sessionId, products, cart, totalQuantity };
+  return { products, cart, totalQuantity };
 };
 
 export const action: ActionFunction = async ({
@@ -70,8 +70,7 @@ export const action: ActionFunction = async ({
 };
 
 export default function Index() {
-  const { sessionId, products, cart, totalQuantity } =
-    useLoaderData<typeof loader>();
+  const { products, cart, totalQuantity } = useLoaderData<typeof loader>();
   const [cartCount, setCartCount] = useState<number>(totalQuantity);
   const [cartOpen, setCartOpen] = useState<boolean>(false);
 
@@ -81,12 +80,11 @@ export default function Index() {
     <div className="container mx-auto max-w-screen-lg p-8 xl:mt-4 xl:mb-8 divide-y">
       {cart && (
         <CartDialog
+          cart={cart}
           open={cartOpen}
           setOpen={setCartOpen}
           cartCount={cartCount}
           setCartCount={setCartCount}
-          cart={cart}
-          sessionId={sessionId}
         />
       )}
       <header className="pb-8">

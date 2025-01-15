@@ -6,7 +6,8 @@ import {
 } from "~/queries/cartQueries";
 import { commitSession } from "~/sessions";
 import { Session } from "@remix-run/node";
-import { Cart } from "@prisma/client";
+import { getProductPriceById } from "~/queries/productQueries";
+import { validateProductIdAndQuantity } from "~/routes/_index/validate";
 
 interface IndexActionArgs {
   sessionId: string;
@@ -22,18 +23,18 @@ export const addToCartAction = async ({
   const productId = Number(formData.get("productId") || -1);
   const quantity = Number(formData.get("quantity") || 1);
 
-  if (isNaN(productId) || productId <= 0 || isNaN(quantity)) {
+  validateProductIdAndQuantity(productId, quantity);
+
+  const { price } = (await getProductPriceById(productId)) ?? {};
+  if (!price) {
     throw new Response("Invalid input", { status: 400 });
   }
 
   const cart = await upsertCart(sessionId);
-  const cartItem = await upsertCartItem(cart.id, productId, quantity);
+  const cartItem = await upsertCartItem(cart.id, productId, price, quantity);
 
   return new Response(JSON.stringify({ success: true, cartItem }), {
-    headers: {
-      "Content-Type": "application/json",
-      "Set-Cookie": await commitSession(session),
-    },
+    headers: { "Set-Cookie": await commitSession(session) },
   });
 };
 
@@ -45,16 +46,23 @@ export const updateCartItemQuantityAction = async ({
   const productId = Number(formData.get("productId") || -1);
   const quantity = Number(formData.get("quantity") || 1);
 
-  const cart = (await getCart(sessionId)) as Cart;
-  const cartItem = await upsertCartItem(cart.id, productId, quantity);
+  validateProductIdAndQuantity(productId, quantity);
+
+  const cart = await getCart(sessionId);
+  if (!cart) {
+    throw new Response("Cart not found", { status: 400 });
+  }
+
+  const { price } = (await getProductPriceById(productId)) ?? {};
+  if (!price) {
+    throw new Response("Product not found", { status: 400 });
+  }
+
+  const cartItem = await upsertCartItem(cart.id, productId, price, quantity);
 
   return Response.json(
     { success: true, cartItem },
-    {
-      headers: {
-        "Set-Cookie": await commitSession(session),
-      },
-    }
+    { headers: { "Set-Cookie": await commitSession(session) } }
   );
 };
 
@@ -62,17 +70,15 @@ export const removeCartItemAction = async ({
   session,
   formData,
 }: Omit<IndexActionArgs, "sessionId">) => {
-  const deletedCartItem = await deleteCartItem(
-    Number(formData.get("cartId") || -1),
-    Number(formData.get("productId") || -1)
-  );
+  const productId = Number(formData.get("productId") || -1);
+  const quantity = Number(formData.get("quantity") || 1);
+
+  validateProductIdAndQuantity(productId, quantity);
+
+  const deletedCartItem = await deleteCartItem(productId, quantity);
 
   return Response.json(
     { success: true, deletedCartItem },
-    {
-      headers: {
-        "Set-Cookie": await commitSession(session),
-      },
-    }
+    { headers: { "Set-Cookie": await commitSession(session) } }
   );
 };
