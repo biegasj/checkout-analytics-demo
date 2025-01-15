@@ -10,25 +10,23 @@ import CartItemCard from "~/components/cart/CartItemCard";
 import CartDialogFooter from "~/components/cart/CartDialogFooter";
 
 interface CartProps {
-  open: boolean;
-  setOpen: (open: boolean) => void;
   cart: Cart & {
     items: (CartItem & {
       product: Product;
     })[];
   };
+  open: boolean;
+  setOpen: (open: boolean) => void;
   cartCount: number;
   setCartCount: (value: ((prevState: number) => number) | number) => void;
-  sessionId: string;
 }
 
 const CartDialog = ({
+  cart,
   open,
   setOpen,
-  cart,
   cartCount,
   setCartCount,
-  sessionId,
 }: CartProps) => {
   const subtotal = cart.items.reduce(
     (total, item) => total + item.product.price * item.quantity,
@@ -92,7 +90,6 @@ const CartDialog = ({
 
                 <CartDialogFooter
                   cart={cart}
-                  sessionId={sessionId}
                   subtotal={subtotal}
                   onClose={() => setOpen(false)}
                 />

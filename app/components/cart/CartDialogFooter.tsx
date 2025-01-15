@@ -2,19 +2,17 @@ import { Link } from "@remix-run/react";
 import { Cart, CartItem, Product } from "@prisma/client";
 
 interface CartDialogFooterProps {
-  sessionId: string;
   subtotal: number;
   onClose: () => void;
-  cart?: Cart & { items: (CartItem & { product: Product })[] };
+  cart: Cart & { items: (CartItem & { product: Product })[] };
 }
 
 const CartDialogFooter = ({
-  sessionId,
   subtotal,
   onClose,
   cart,
 }: CartDialogFooterProps) => {
-  const isCheckoutDisabled = cart?.items.length === 0;
+  const isCheckoutDisabled = cart.items.length === 0;
 
   return (
     <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
@@ -32,7 +30,7 @@ const CartDialogFooter = ({
           </div>
         ) : (
           <Link
-            to={`/checkout/${sessionId}`}
+            to={`/checkout/${cart.sessionId}`}
             className="flex items-center justify-center rounded-md border border-transparent bg-blue-600 px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-blue-700"
           >
             Checkout
