@@ -1,13 +1,13 @@
 import { CartItem, Product } from "@prisma/client";
 import { memo } from "react";
 
-interface CartItemSummaryCardProps {
+interface CartItemCardProps {
   item: CartItem & {
     product: Product;
   };
 }
 
-const CartItemSummaryCard = memo(({ item }: CartItemSummaryCardProps) => {
+const CheckoutItemCard = memo(({ item }: CartItemCardProps) => {
   const itemTotal = item.product.price * item.quantity;
 
   return (
@@ -38,4 +38,4 @@ const CartItemSummaryCard = memo(({ item }: CartItemSummaryCardProps) => {
   );
 });
 
-export default CartItemSummaryCard;
+export default CheckoutItemCard;

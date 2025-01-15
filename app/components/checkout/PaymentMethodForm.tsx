@@ -2,12 +2,12 @@ import { PAYMENT_METHODS, PaymentMethod } from "~/utils/paymentMethods";
 import { Field, Label, Radio, RadioGroup } from "@headlessui/react";
 
 interface PaymentMethodFormProps {
-  selectedMethod: string;
+  selectedMethodId: string;
   onChange: (method: string) => void;
 }
 
 export default function PaymentMethodForm({
-  selectedMethod,
+  selectedMethodId,
   onChange,
 }: PaymentMethodFormProps) {
   return (
@@ -21,7 +21,7 @@ export default function PaymentMethodForm({
           to process the order.
         </p>
         <RadioGroup
-          value={selectedMethod}
+          value={selectedMethodId}
           onChange={onChange}
           aria-label="Payment method"
           className="mt-6 space-y-6"
@@ -40,7 +40,7 @@ export default function PaymentMethodForm({
             </Field>
           ))}
         </RadioGroup>
-        <input type="hidden" name="paymentMethod" value={selectedMethod} />
+        <input type="hidden" name="paymentMethodId" value={selectedMethodId} />
       </div>
     </section>
   );

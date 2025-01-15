@@ -24,6 +24,23 @@ export default function DeliveryAddressForm({
           Fill in the delivery address.
         </p>
         <Fieldset className="mt-10 w-full grid grid-cols-2 gap-x-6 gap-y-6">
+          <div className="grid grid-cols-1 gap-4 col-span-2">
+            <Field>
+              <Label className="block text-sm font-medium text-gray-900">
+                E-mail address
+              </Label>
+              <Input
+                className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                name="email"
+                type="email"
+              />
+              {errors?.email && (
+                <Description className="mt-1 text-red-600 text-sm">
+                  {errors.email}
+                </Description>
+              )}
+            </Field>
+          </div>
           <Field>
             <Label className="block text-sm font-medium text-gray-900">
               First name
@@ -71,11 +88,11 @@ export default function DeliveryAddressForm({
             </Label>
             <Input
               className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
-              name="streetAddress"
+              name="street"
             />
-            {errors?.streetAddress && (
+            {errors?.street && (
               <Description className="mt-1 text-red-600 text-sm">
-                {errors.streetAddress}
+                {errors.street}
               </Description>
             )}
           </Field>
@@ -100,11 +117,11 @@ export default function DeliveryAddressForm({
               </Label>
               <Input
                 className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
-                name="stateProvince"
+                name="province"
               />
-              {errors?.stateProvince && (
+              {errors?.province && (
                 <Description className="mt-1 text-red-600 text-sm">
-                  {errors.stateProvince}
+                  {errors.province}
                 </Description>
               )}
             </Field>
@@ -114,11 +131,11 @@ export default function DeliveryAddressForm({
               </Label>
               <Input
                 className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
-                name="postalCode"
+                name="zipCode"
               />
-              {errors?.postalCode && (
+              {errors?.zipCode && (
                 <Description className="mt-1 text-red-600 text-sm">
-                  {errors.postalCode}
+                  {errors.zipCode}
                 </Description>
               )}
             </Field>

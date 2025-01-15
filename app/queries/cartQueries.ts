@@ -27,12 +27,13 @@ export async function upsertCart(sessionId: string) {
 export async function upsertCartItem(
   cartId: number,
   productId: number,
+  priceAtPurchase: number,
   quantity: number
 ) {
   return prisma.cartItem.upsert({
     where: { cartItemId: { cartId, productId } },
-    update: { quantity },
-    create: { cartId, productId, quantity },
+    update: { quantity: { increment: quantity }, priceAtPurchase },
+    create: { cartId, productId, priceAtPurchase, quantity },
   });
 }
 

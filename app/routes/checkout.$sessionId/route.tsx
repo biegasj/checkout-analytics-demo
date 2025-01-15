@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   ActionFunction,
   ActionFunctionArgs,
@@ -6,16 +7,23 @@ import {
   redirect,
 } from "@remix-run/node";
 import { Form, useActionData, useLoaderData } from "@remix-run/react";
+
 import { getCartWithRelated } from "~/queries/cartQueries";
 import DeliveryAddressForm from "~/components/checkout/DeliveryAddressForm";
 import ShippingMethodForm from "~/components/checkout/ShippingMethodForm";
-import OrderSummary from "~/components/checkout/OrderSummary";
-import { CartItem, Product } from "@prisma/client";
-import { useState } from "react";
+import CartSummary from "~/components/cart/CartSummary";
 import { SHIPPING_METHODS, ShippingMethod } from "~/utils/shippingMethods";
 import { PAYMENT_METHODS } from "~/utils/paymentMethods";
 import PaymentMethodForm from "~/components/checkout/PaymentMethodForm";
-import { validateAddressForm } from "~/routes/checkout.$sessionId/validation";
+import { createOrder } from "~/queries/orderQueries";
+import { destroySession, getSession } from "~/sessions";
+import {
+  extractAddressDetails,
+  validateAddressForm,
+} from "~/routes/checkout.$sessionId/form";
+import { AddressDetails } from "~/types/addressDetails";
+import { useSubtotal } from "~/hooks/useSubtotal";
+import { useSelectedShippingMethod } from "~/hooks/useSelectedShippingMethod";
 
 export const loader: LoaderFunction = async ({
   params,
@@ -38,17 +46,28 @@ export const action: ActionFunction = async ({
 }: ActionFunctionArgs) => {
   const formData = await request.formData();
 
-  const errors = validateAddressForm(formData);
-  if (errors) {
-    return { errors };
-  }
-
+  const session = await getSession(request.headers.get("Cookie"));
   const sessionId = String(formData.get("sessionId"));
   if (!sessionId) {
     throw new Response("Session ID is required", { status: 400 });
   }
 
-  return redirect(`/order-confirmation/${sessionId}`);
+  const errors = validateAddressForm(formData);
+  if (errors) {
+    return { errors };
+  }
+
+  const cart = await getCartWithRelated(sessionId);
+  if (!cart) {
+    throw new Response("Cart not found", { status: 404 });
+  }
+
+  const addressDetails: AddressDetails = extractAddressDetails(formData);
+  await createOrder(cart.id, addressDetails);
+
+  return redirect(`/order-confirmation/${sessionId}`, {
+    headers: { "Set-Cookie": await destroySession(session) },
+  });
 };
 
 export default function Checkout() {
@@ -62,17 +81,10 @@ export default function Checkout() {
     PAYMENT_METHODS[0].id
   );
 
-  const subtotal = cart.items.reduce(
-    (total: number, item: CartItem & { product: Product }) =>
-      total + item.product.price * item.quantity,
-    0
-  );
-
+  const subtotal: number = useSubtotal(cart);
   const selectedShippingMethod: ShippingMethod | undefined =
-    SHIPPING_METHODS.find(
-      (method: ShippingMethod) => method.id === shippingMethodId
-    );
-  const shippingCost: number = selectedShippingMethod?.cost ?? 0;
+    useSelectedShippingMethod(shippingMethodId);
+  const shippingPrice: number = selectedShippingMethod?.cost ?? 0;
 
   return (
     <div className="container mx-auto max-w-screen-xl p-8 xl:mt-4 xl:mb-8">
@@ -88,11 +100,11 @@ export default function Checkout() {
             <div className="space-y-12">
               <DeliveryAddressForm errors={actionData?.errors} />
               <ShippingMethodForm
-                selectedMethod={shippingMethodId}
+                selectedMethodId={shippingMethodId}
                 onChange={setShippingMethodId}
               />
               <PaymentMethodForm
-                selectedMethod={paymentMethodId}
+                selectedMethodId={paymentMethodId}
                 onChange={setPaymentMethodId}
               />
             </div>
@@ -107,12 +119,13 @@ export default function Checkout() {
             </div>
 
             <input type="hidden" name="sessionId" value={cart.sessionId} />
+            <input type="hidden" name="shippingPrice" value={shippingPrice} />
           </Form>
         </div>
-        <OrderSummary
+        <CartSummary
           cart={cart}
           subtotal={subtotal}
-          shippingCost={shippingCost}
+          shippingPrice={shippingPrice}
         />
       </div>
     </div>

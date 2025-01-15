@@ -2,12 +2,12 @@ import { SHIPPING_METHODS, ShippingMethod } from "~/utils/shippingMethods";
 import { Field, Label, Radio, RadioGroup } from "@headlessui/react";
 
 interface ShippingMethodFormProps {
-  selectedMethod: string;
+  selectedMethodId: string;
   onChange: (method: string) => void;
 }
 
 export default function ShippingMethodForm({
-  selectedMethod,
+  selectedMethodId,
   onChange,
 }: ShippingMethodFormProps) {
   return (
@@ -21,7 +21,7 @@ export default function ShippingMethodForm({
           to process the order.
         </p>
         <RadioGroup
-          value={selectedMethod}
+          value={selectedMethodId}
           onChange={onChange}
           aria-label="Shipping method"
           className="mt-6 space-y-6"
@@ -42,7 +42,7 @@ export default function ShippingMethodForm({
             </Field>
           ))}
         </RadioGroup>
-        <input type="hidden" name="shippingMethod" value={selectedMethod} />
+        <input type="hidden" name="shippingMethodId" value={selectedMethodId} />
       </div>
     </section>
   );
