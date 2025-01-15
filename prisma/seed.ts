@@ -91,6 +91,7 @@ async function main() {
     create: {
       id: 1,
       cartId: cart.id,
+      email: "john.doe@gmail.com",
       firstName: "John",
       lastName: "Doe",
       address: "123 Main St, New York, NY",
