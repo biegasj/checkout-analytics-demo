@@ -62,6 +62,7 @@ async function main() {
     create: {
       cartId: cart.id,
       productId: product_laptop.id,
+      priceAtPurchase: 199.0,
       quantity: 1,
     },
   });
@@ -80,6 +81,7 @@ async function main() {
       cartId: cart.id,
       productId: product_smartphone.id,
       quantity: 2,
+      priceAtPurchase: 199.0,
     },
   });
 
@@ -94,45 +96,7 @@ async function main() {
       address: "123 Main St, New York, NY",
       shippingMethod: "Standard",
       paymentMethod: "Credit Card",
-      totalPrice: 139.97,
-    },
-  });
-
-  await prisma.orderItem.upsert({
-    where: {
-      orderItemId: {
-        orderId: order.id,
-        productId: product_smartphone.id,
-      },
-    },
-    update: {
-      quantity: 2,
-      priceAtPurchase: 79.99,
-    },
-    create: {
-      orderId: order.id,
-      productId: product_smartphone.id,
-      quantity: 2,
-      priceAtPurchase: 79.99,
-    },
-  });
-
-  await prisma.orderItem.upsert({
-    where: {
-      orderItemId: {
-        orderId: order.id,
-        productId: product_laptop.id,
-      },
-    },
-    update: {
-      quantity: 1,
-      priceAtPurchase: 29.99,
-    },
-    create: {
-      orderId: order.id,
-      productId: product_laptop.id,
-      quantity: 1,
-      priceAtPurchase: 29.99,
+      shippingPrice: 5.0,
     },
   });
 }
